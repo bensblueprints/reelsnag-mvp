@@ -1,0 +1,1 @@
+Screenshot placeholder — capture the app window (dark UI, queue with an active download, format picker modal open) and save as screenshot.png here.

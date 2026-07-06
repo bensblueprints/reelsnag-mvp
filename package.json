@@ -1,0 +1,51 @@
+{
+  "name": "clip-grabber",
+  "productName": "Reelsnag",
+  "version": "1.0.0",
+  "description": "Reelsnag — a friendly desktop GUI for yt-dlp. Pay once, own it forever. For backing up your own uploads and permitted content.",
+  "main": "main.js",
+  "author": "Ben (bensblueprints)",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/smoke.js",
+    "dist": "electron-builder --win nsis"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.bensblueprints.reelsnag",
+    "productName": "Reelsnag",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "renderer/**/*",
+      "node_modules/**/*"
+    ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.utilities"
+    }
+  }
+}

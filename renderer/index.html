@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline';" />
+<title>Reelsnag</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">⬇</span>
+        <span class="brand-name">Reelsnag</span>
+      </div>
+      <nav class="tabs">
+        <button class="tab active" data-tab="queue">Queue</button>
+        <button class="tab" data-tab="history">History</button>
+        <button class="tab" data-tab="settings">Settings</button>
+      </nav>
+    </header>
+
+    <div id="firstRunBanner" class="banner hidden">
+      <div class="banner-text">
+        <strong>Setting up yt-dlp…</strong>
+        <span id="bannerDetail">Downloading the latest release from GitHub</span>
+      </div>
+      <div class="banner-progress"><div id="bannerBar" class="banner-bar-fill" style="width:0%"></div></div>
+    </div>
+
+    <main class="content">
+      <!-- QUEUE TAB -->
+      <section id="tab-queue" class="tab-panel active">
+        <div class="add-bar">
+          <input id="urlInput" type="text" placeholder="Paste a video URL (your own upload, CC-licensed, or otherwise permitted)…" autocomplete="off" />
+          <button id="addBtn" class="btn primary">Add</button>
+          <button id="batchBtn" class="btn ghost">Batch…</button>
+        </div>
+
+        <div id="queueEmpty" class="empty-state">
+          <p>No downloads yet. Paste a URL above to get started.</p>
+        </div>
+
+        <ul id="queueList" class="queue-list"></ul>
+      </section>
+
+      <!-- HISTORY TAB -->
+      <section id="tab-history" class="tab-panel">
+        <div class="panel-header">
+          <h2>History</h2>
+          <button id="clearHistoryBtn" class="btn ghost small">Clear history</button>
+        </div>
+        <div id="historyEmpty" class="empty-state">
+          <p>Completed downloads will show up here.</p>
+        </div>
+        <ul id="historyList" class="history-list"></ul>
+      </section>
+
+      <!-- SETTINGS TAB -->
+      <section id="tab-settings" class="tab-panel">
+        <h2>Settings</h2>
+
+        <div class="field-row">
+          <label>Output folder</label>
+          <div class="field-inline">
+            <input id="outDirInput" type="text" readonly />
+            <button id="chooseFolderBtn" class="btn ghost small">Choose…</button>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label>Filename template</label>
+          <input id="templateInput" type="text" />
+        </div>
+
+        <div class="field-row">
+          <label>Default quality</label>
+          <select id="defaultQualitySelect">
+            <option value="best">Best available</option>
+            <option value="1080p">Up to 1080p</option>
+            <option value="720p">Up to 720p</option>
+            <option value="480p">Up to 480p</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label>Concurrency (simultaneous downloads)</label>
+          <select id="concurrencySelect">
+            <option value="1">1 (sequential)</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label>Default subtitle languages</label>
+          <input id="subLangsInput" type="text" placeholder="en, es" />
+        </div>
+
+        <div class="field-row engine">
+          <label>yt-dlp engine</label>
+          <div class="engine-status">
+            <span id="ytdlpVersionLabel">Checking…</span>
+            <button id="updateYtdlpBtn" class="btn ghost small">Update yt-dlp</button>
+          </div>
+        </div>
+
+        <button id="saveSettingsBtn" class="btn primary">Save settings</button>
+      </section>
+    </main>
+
+    <footer class="footer-note">
+      Reelsnag is a GUI for the open-source <strong>yt-dlp</strong> project, intended for <strong>personal use</strong>:
+      downloading your own uploads, content you have rights to, Creative Commons / public-domain media, and material
+      the platform's terms permit you to download. Respect each platform's Terms of Service and copyright law.
+      Don't use it to redistribute or pirate content. See <span class="footer-link">README § Positioning</span> for details.
+    </footer>
+  </div>
+
+  <!-- FORMAT PICKER MODAL -->
+  <div id="formatModal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <img id="fmThumb" class="fm-thumb" alt="" />
+        <div>
+          <h3 id="fmTitle">Title</h3>
+          <p id="fmMeta" class="fm-meta"></p>
+        </div>
+        <button class="modal-close" data-close="formatModal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="fm-row">
+          <label><input type="checkbox" id="fmAudioOnly" /> Audio only (MP3)</label>
+          <select id="fmBitrate">
+            <option value="128">128 kbps</option>
+            <option value="192" selected>192 kbps</option>
+            <option value="320">320 kbps</option>
+          </select>
+        </div>
+
+        <div id="fmFormatTableWrap">
+          <table class="fm-table">
+            <thead><tr><th>Resolution</th><th>Ext</th><th>Codec</th><th>Size</th><th></th></tr></thead>
+            <tbody id="fmFormatTable"></tbody>
+          </table>
+        </div>
+
+        <div class="fm-row">
+          <label><input type="checkbox" id="fmTrimEnable" /> Trim</label>
+          <input type="text" id="fmTrimStart" placeholder="mm:ss start" class="fm-trim-input" />
+          <input type="text" id="fmTrimEnd" placeholder="mm:ss end" class="fm-trim-input" />
+        </div>
+
+        <div class="fm-row" id="fmSubsRow">
+          <label>Subtitles</label>
+          <div id="fmSubsList" class="fm-subs-list"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn ghost" data-close="formatModal">Cancel</button>
+        <button id="fmAddBtn" class="btn primary">Add to queue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATCH MODAL -->
+  <div id="batchModal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <div><h3>Batch add</h3><p class="fm-meta">One URL per line, or load a .txt file</p></div>
+        <button class="modal-close" data-close="batchModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="batchTextarea" rows="10" placeholder="https://example.com/my-video-1&#10;https://example.com/my-video-2"></textarea>
+        <button id="loadTxtBtn" class="btn ghost small">Load .txt file…</button>
+        <p class="fm-meta" id="batchSummary"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn ghost" data-close="batchModal">Cancel</button>
+        <button id="batchAddBtn" class="btn primary">Add all to queue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
