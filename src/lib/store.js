@@ -12,7 +12,12 @@ const SETTINGS_DEFAULTS = {
   template: '%(title)s [%(id)s].%(ext)s',
   defaultQuality: 'best',
   concurrency: 1,
-  subLangsDefault: ['en']
+  subLangsDefault: ['en'],
+  // Cookie source for sites that gate content behind a login (Facebook, Instagram, etc.):
+  // 'none' | 'browser' (extract live from an installed browser) | 'file' (a cookies.txt)
+  cookiesMode: 'none',
+  cookiesBrowser: 'chrome',
+  cookiesFile: null
 };
 
 function writeJsonAtomic(file, data) {

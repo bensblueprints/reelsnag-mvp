@@ -33,10 +33,27 @@ function mapProbe(data) {
   };
 }
 
+/**
+ * Build the yt-dlp cookie args from settings, so login-gated pages (Facebook,
+ * Instagram, etc.) can be read the same way a logged-in browser tab would see
+ * them. 'browser' extracts live from an installed browser's cookie jar;
+ * 'file' points at a previously exported cookies.txt (Netscape format).
+ */
+function buildCookieArgs(settings) {
+  if (!settings) return [];
+  if (settings.cookiesMode === 'browser' && settings.cookiesBrowser) {
+    return ['--cookies-from-browser', settings.cookiesBrowser];
+  }
+  if (settings.cookiesMode === 'file' && settings.cookiesFile) {
+    return ['--cookies', settings.cookiesFile];
+  }
+  return [];
+}
+
 /** Probe a URL's metadata via `yt-dlp -J` without downloading anything. */
-function probe(binPath, url, { timeoutMs = 30000 } = {}) {
+function probe(binPath, url, { timeoutMs = 30000, cookieArgs = [] } = {}) {
   return new Promise((resolve, reject) => {
-    const args = ['-J', '--no-playlist', '--no-warnings', url];
+    const args = ['-J', '--no-playlist', '--no-warnings', ...cookieArgs, url];
     const child = spawn(binPath, args, { windowsHide: true });
     let stdout = '';
     let stderr = '';
@@ -61,9 +78,18 @@ function probe(binPath, url, { timeoutMs = 30000 } = {}) {
   });
 }
 
+/**
+ * Some sites (Facebook reels/posts especially) put the entire caption in
+ * "title", which combined with --restrict-filenames can blow past Windows'
+ * 260-char MAX_PATH and fail with "unable to open for writing: No such file
+ * or directory". --trim-filenames caps each templated field so the final
+ * path stays well under the limit regardless of output folder depth.
+ */
+const TRIM_FILENAMES_LENGTH = 100;
+
 /** Build the yt-dlp CLI args for a queued job. */
-function buildDownloadArgs(job, { outTemplate, ffmpegBin }) {
-  const args = ['--newline', '--no-playlist', '--no-warnings', '--ffmpeg-location', ffmpegBin, '-o', outTemplate, '--restrict-filenames'];
+function buildDownloadArgs(job, { outTemplate, ffmpegBin, cookieArgs = [] }) {
+  const args = ['--newline', '--no-playlist', '--no-warnings', '--ffmpeg-location', ffmpegBin, '-o', outTemplate, '--restrict-filenames', '--trim-filenames', String(TRIM_FILENAMES_LENGTH), ...cookieArgs];
   if (job.audioOnly) {
     args.push('-x', '--audio-format', 'mp3');
     if (job.audioBitrate) args.push('--audio-quality', String(job.audioBitrate));
@@ -117,4 +143,4 @@ function download(binPath, args, { onProgress, onLine, signal } = {}) {
   });
 }
 
-module.exports = { probe, buildDownloadArgs, download, mapProbe };
+module.exports = { probe, buildDownloadArgs, download, mapProbe, buildCookieArgs };

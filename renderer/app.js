@@ -261,10 +261,24 @@ async function refreshSettings() {
   document.getElementById('defaultQualitySelect').value = s.defaultQuality || 'best';
   document.getElementById('concurrencySelect').value = String(s.concurrency || 1);
   document.getElementById('subLangsInput').value = (s.subLangsDefault || []).join(', ');
+  document.getElementById('cookiesModeSelect').value = s.cookiesMode || 'none';
+  document.getElementById('cookiesBrowserSelect').value = s.cookiesBrowser || 'chrome';
+  document.getElementById('cookiesFileInput').value = s.cookiesFile || '';
+  updateCookiesRowVisibility();
 }
 document.getElementById('chooseFolderBtn').addEventListener('click', async () => {
   const dir = await window.api.chooseFolder();
   if (dir) document.getElementById('outDirInput').value = dir;
+});
+function updateCookiesRowVisibility() {
+  const mode = document.getElementById('cookiesModeSelect').value;
+  document.getElementById('cookiesBrowserRow').classList.toggle('hidden', mode !== 'browser');
+  document.getElementById('cookiesFileRow').classList.toggle('hidden', mode !== 'file');
+}
+document.getElementById('cookiesModeSelect').addEventListener('change', updateCookiesRowVisibility);
+document.getElementById('chooseCookiesFileBtn').addEventListener('click', async () => {
+  const file = await window.api.chooseCookiesFile();
+  if (file) document.getElementById('cookiesFileInput').value = file;
 });
 document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
   const patch = {
@@ -272,7 +286,10 @@ document.getElementById('saveSettingsBtn').addEventListener('click', async () =>
     template: document.getElementById('templateInput').value,
     defaultQuality: document.getElementById('defaultQualitySelect').value,
     concurrency: Number(document.getElementById('concurrencySelect').value),
-    subLangsDefault: document.getElementById('subLangsInput').value.split(',').map((s) => s.trim()).filter(Boolean)
+    subLangsDefault: document.getElementById('subLangsInput').value.split(',').map((s) => s.trim()).filter(Boolean),
+    cookiesMode: document.getElementById('cookiesModeSelect').value,
+    cookiesBrowser: document.getElementById('cookiesBrowserSelect').value,
+    cookiesFile: document.getElementById('cookiesFileInput').value || null
   };
   await window.api.setSettings(patch);
   const btn = document.getElementById('saveSettingsBtn');

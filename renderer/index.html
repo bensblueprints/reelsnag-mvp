@@ -97,6 +97,37 @@
           <input id="subLangsInput" type="text" placeholder="en, es" />
         </div>
 
+        <div class="field-row">
+          <label>Cookies (for login-gated sites like Facebook/Instagram)</label>
+          <select id="cookiesModeSelect">
+            <option value="none">None</option>
+            <option value="browser">Import from a browser</option>
+            <option value="file">Load a cookies.txt file</option>
+          </select>
+        </div>
+
+        <div class="field-row" id="cookiesBrowserRow">
+          <label>Browser</label>
+          <select id="cookiesBrowserSelect">
+            <option value="chrome">Chrome</option>
+            <option value="edge">Edge</option>
+            <option value="firefox">Firefox</option>
+            <option value="brave">Brave</option>
+            <option value="opera">Opera</option>
+            <option value="vivaldi">Vivaldi</option>
+          </select>
+          <p class="fm-meta">Reads the logged-in session cookies straight from that browser's profile. Close the browser first if the import fails with a "file in use" error.</p>
+        </div>
+
+        <div class="field-row" id="cookiesFileRow">
+          <label>Cookies file</label>
+          <div class="field-inline">
+            <input id="cookiesFileInput" type="text" readonly />
+            <button id="chooseCookiesFileBtn" class="btn ghost small">Choose…</button>
+          </div>
+          <p class="fm-meta">A Netscape-format cookies.txt, e.g. exported with a "Get cookies.txt" browser extension.</p>
+        </div>
+
         <div class="field-row engine">
           <label>yt-dlp engine</label>
           <div class="engine-status">

@@ -32,6 +32,7 @@ In practice that means: creators backing up their **own** uploaded videos, archi
 - 💬 **Subtitles** — download available subs or auto-captions as `.srt` alongside the video
 - 📋 **Batch mode** — paste a list of URLs or load a `.txt` file (one URL per line), enqueue them all at once
 - ⚙️ **Settings** — output folder, filename template, default quality, concurrency, default subtitle languages
+- 🍪 **Cookie import** — for sites like Facebook and Instagram that only serve full video info to a logged-in session, import cookies live from an installed browser (Chrome/Edge/Firefox/Brave/Opera/Vivaldi) or load a `cookies.txt` export — for your own account's permitted content, same as opening it in that browser
 - 🔄 **Self-updating engine** — one-click "Update yt-dlp" because extractors break and yt-dlp ships fixes weekly
 - 🕘 **History** — every completed download recorded locally, jump straight to the file
 

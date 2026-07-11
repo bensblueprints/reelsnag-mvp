@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld('api', {
 
   // Filesystem helpers
   chooseFolder: () => ipcRenderer.invoke('dialog:chooseFolder'),
+  chooseCookiesFile: () => ipcRenderer.invoke('dialog:chooseCookiesFile'),
   openTxtBatchFile: () => ipcRenderer.invoke('dialog:openTxtBatchFile'),
   openInFolder: (filePath) => ipcRenderer.invoke('shell:openInFolder', filePath)
 });

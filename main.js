@@ -37,7 +37,8 @@ async function runJob(job, { onProgress, signal }) {
   const outTemplate = path.join(outDir, template);
 
   onProgress({ status: 'downloading', progress: 0 });
-  const args = ytdlp.buildDownloadArgs(job, { outTemplate, ffmpegBin });
+  const cookieArgs = ytdlp.buildCookieArgs(settings.get());
+  const args = ytdlp.buildDownloadArgs(job, { outTemplate, ffmpegBin, cookieArgs });
   const result = await ytdlp.download(binPath, args, {
     signal,
     onProgress: (p) => onProgress({ progress: Math.round(p.percent), speed: p.speed, eta: p.eta }),
@@ -150,7 +151,8 @@ ipcMain.handle('probe:url', async (_e, url) => {
     stage: p.stage, received: p.received, total: p.total,
     pct: p.total ? Math.round((p.received / p.total) * 100) : null
   }));
-  return ytdlp.probe(binPath, url);
+  const cookieArgs = ytdlp.buildCookieArgs(settings.get());
+  return ytdlp.probe(binPath, url, { cookieArgs });
 });
 
 ipcMain.handle('queue:enqueue', (_e, jobSpec) => queue.enqueue(jobSpec));
@@ -172,6 +174,14 @@ ipcMain.handle('history:clear', () => { history.clear(); return history.list(); 
 
 ipcMain.handle('dialog:chooseFolder', async () => {
   const res = await dialog.showOpenDialog(win, { properties: ['openDirectory', 'createDirectory'] });
+  return res.canceled ? null : res.filePaths[0];
+});
+
+ipcMain.handle('dialog:chooseCookiesFile', async () => {
+  const res = await dialog.showOpenDialog(win, {
+    properties: ['openFile'],
+    filters: [{ name: 'Cookies (Netscape format)', extensions: ['txt'] }, { name: 'All files', extensions: ['*'] }]
+  });
   return res.canceled ? null : res.filePaths[0];
 });
 

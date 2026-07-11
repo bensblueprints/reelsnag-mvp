@@ -40,7 +40,8 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "menuCategory": "OneTimeSuite"
     },
     "mac": {
       "target": [
