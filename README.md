@@ -12,7 +12,7 @@ Reelsnag wraps the excellent open-source [yt-dlp](https://github.com/yt-dlp/yt-d
 
 Don't want to run it from source? Grab the packaged Windows installer (one-time purchase, lifetime updates):
 
-**→ [https://whop.com/onetime-suite](https://whop.com/onetime-suite)**
+**→ [https://whop.com/benjisaiempire/reelsnag](https://whop.com/benjisaiempire/reelsnag)**
 
 The source here is MIT-licensed and always will be — the installer is just the convenient, pre-packaged version.
 
