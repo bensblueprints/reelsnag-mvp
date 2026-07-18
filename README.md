@@ -1,5 +1,9 @@
 # Reelsnag
 
+## Demo
+
+VIDEO-PLACEHOLDER
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **A clean desktop GUI for yt-dlp. Paste a URL, pick a quality, queue it. Trim clips, extract MP3s, grab subtitles, batch a whole list — $24 once, no subscription.**
