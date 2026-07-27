@@ -8,6 +8,7 @@ const ffmpeg = require('./src/lib/ffmpeg');
 const ytdlp = require('./src/lib/ytdlp');
 const { JobQueue } = require('./src/lib/queue');
 const { Settings, History } = require('./src/lib/store');
+const { gateLicense, registerLicenseIpc } = require('./license-gate');
 
 const SMOKE = process.argv.includes('--smoke');
 
@@ -93,7 +94,10 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  if (!(await gateLicense())) return; // quit already requested
+  registerLicenseIpc();
+
   dataDir = app.getPath('userData');
   settings = new Settings(dataDir);
   history = new History(dataDir);
